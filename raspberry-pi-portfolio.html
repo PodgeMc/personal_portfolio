@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raspberry Pi Portfolio Server</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    :root {
+      --pi-bg: #0b1110;
+      --pi-surface: #131b19;
+      --pi-surface-2: #182320;
+      --pi-border: #25362f;
+      --pi-text: #f4f7f5;
+      --pi-muted: #b7c4be;
+      --pi-accent: #49c774;
+      --pi-accent-2: #2ea95d;
+      --pi-shadow: rgba(73, 199, 116, 0.18);
+    }
+
+    body.pi-page {
+      background:
+        radial-gradient(circle at top right, rgba(73, 199, 116, 0.08), transparent 28%),
+        linear-gradient(180deg, #0d1412 0%, #0a100f 100%);
+      color: var(--pi-text);
+    }
+
+    .pi-page .site-header {
+      background: rgba(10, 16, 15, 0.94);
+      border-bottom: 1px solid rgba(73, 199, 116, 0.16);
+      backdrop-filter: blur(8px);
+    }
+
+    .pi-page .nav a:hover {
+      background: var(--pi-accent-2);
+      color: #08110d;
+    }
+
+    .pi-page .nav a:hover::after {
+      border-color: rgba(73, 199, 116, 0.34);
+      box-shadow: 0 0 14px rgba(73, 199, 116, 0.30);
+    }
+
+    .pi-page .nav a.active {
+      background: linear-gradient(135deg, var(--pi-accent), var(--pi-accent-2));
+      color: #08110d;
+    }
+
+    .pi-page .nav a.active::after {
+      border-color: rgba(73, 199, 116, 0.45);
+      box-shadow: 0 0 10px rgba(73, 199, 116, 0.22);
+    }
+
+    .pi-hero {
+      width: min(1000px, 92%);
+      margin: 35px auto 20px;
+      padding: 42px 32px;
+      border-radius: 18px;
+      border: 1px solid rgba(73, 199, 116, 0.16);
+      background:
+        linear-gradient(135deg, rgba(73, 199, 116, 0.12), rgba(255,255,255,0.02)),
+        #101715;
+      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.42);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pi-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(73, 199, 116, 0.04), transparent);
+      pointer-events: none;
+    }
+
+    .pi-kicker {
+      display: inline-block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #7de19e;
+      margin-bottom: 12px;
+    }
+
+    .pi-hero h1 {
+      font-size: clamp(2.2rem, 4vw, 3.1rem);
+      line-height: 1.1;
+      margin-bottom: 14px;
+      color: #ffffff;
+    }
+
+    .pi-hero p {
+      max-width: 760px;
+      font-size: 1.04rem;
+      color: #d4ddd8;
+      margin-bottom: 0;
+    }
+
+    .pi-divider {
+      width: 110px;
+      height: 4px;
+      border-radius: 999px;
+      margin-top: 18px;
+      background: linear-gradient(90deg, var(--pi-accent), var(--pi-accent-2));
+      box-shadow: 0 0 16px var(--pi-shadow);
+    }
+
+    .pi-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pi-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(73, 199, 116, 0.10);
+      border: 1px solid rgba(73, 199, 116, 0.16);
+      color: #96ebb1;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    .pi-page section {
+      width: min(1000px, 92%);
+      padding: 26px 0;
+    }
+
+    .pi-page section + section {
+      border-top: 1px solid rgba(73, 199, 116, 0.08);
+      margin-top: 6px;
+      padding-top: 28px;
+    }
+
+    .pi-section-title {
+      font-size: 1.45rem;
+      margin-bottom: 14px;
+      color: #ffffff;
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .pi-section-title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 4px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--pi-accent), var(--pi-accent-2));
+    }
+
+    .pi-page p {
+      color: var(--pi-muted);
+    }
+
+    .pi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 12px;
+    }
+
+    .pi-card {
+      background: linear-gradient(180deg, #161f1c 0%, #111917 100%);
+      border: 1px solid rgba(73, 199, 116, 0.12);
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.26);
+    }
+
+    .pi-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(73, 199, 116, 0.34);
+      box-shadow: 0 20px 38px rgba(0,0,0,0.36), 0 0 18px rgba(73,199,116,0.10);
+    }
+
+    .pi-card h3 {
+      color: #ffffff;
+      margin-bottom: 10px;
+      font-size: 1.05rem;
+    }
+
+    .pi-card p {
+      margin-bottom: 0;
+      color: #cdd8d2;
+      font-size: 0.95rem;
+    }
+
+    .pi-highlight {
+      background: linear-gradient(180deg, rgba(73,199,116,0.12), rgba(73,199,116,0.04));
+      border: 1px solid rgba(73,199,116,0.16);
+      border-radius: 16px;
+      padding: 22px;
+      margin-top: 10px;
+    }
+
+    .pi-highlight p:last-child {
+      margin-bottom: 0;
+    }
+
+    .pi-list {
+      list-style: none;
+      padding-left: 0;
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .pi-list li {
+      background: var(--pi-surface);
+      border: 1px solid rgba(73,199,116,0.10);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #d6e0da;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .pi-list li:hover {
+      border-color: rgba(73,199,116,0.26);
+      transform: translateX(4px);
+    }
+
+    .pi-two-col {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .pi-panel {
+      background: linear-gradient(180deg, #161f1c 0%, #111917 100%);
+      border: 1px solid rgba(73,199,116,0.12);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 16px 30px rgba(0,0,0,0.26);
+    }
+
+    .pi-panel h3 {
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .pi-page .download-btn {
+      background: linear-gradient(135deg, var(--pi-accent), var(--pi-accent-2));
+      color: #08110d;
+      border: 1px solid #2ea95d;
+      box-shadow: 0 14px 28px rgba(73,199,116,0.18);
+    }
+
+    .pi-page .download-btn:hover {
+      box-shadow: 0 16px 32px rgba(73,199,116,0.24);
+    }
+
+    @media (max-width: 780px) {
+      .pi-two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .pi-hero {
+        padding: 30px 22px;
+      }
+    }
+  </style>
+</head>
+<body class="pi-page">
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="projects.html" class="active">Projects</a>
+    <a href="final-year-project.html">Final Year Project</a>
+    <a href="skills.html">Skills</a>
+  </nav>
+</header>
+
+<div class="pi-hero">
+  <span class="pi-kicker">Hosting Project</span>
+  <h1>Raspberry Pi Portfolio Server</h1>
+  <p>
+    This project is the foundation of my website. Instead of relying on standard hosting,
+    I decided to run my portfolio on a Raspberry Pi so I could learn more about Linux,
+    deployment, web servers, and the practical side of managing a live system myself.
+  </p>
+  <div class="pi-divider"></div>
+
+  <div class="pi-meta">
+    <span class="pi-tag">Raspberry Pi</span>
+    <span class="pi-tag">Linux</span>
+    <span class="pi-tag">Nginx</span>
+    <span class="pi-tag">Remote Access</span>
+    <span class="pi-tag">Self Hosting</span>
+  </div>
+</div>
+
+<section>
+  <h2 class="pi-section-title">Project Overview</h2>
+  <div class="pi-highlight">
+    <p>
+      This website runs from a Raspberry Pi at home. A web server on the Pi serves the site,
+      while a secure public access setup makes it reachable on the internet. The project gave
+      me a way to move beyond static web design and start learning how websites are actually
+      deployed, hosted, and maintained in a real environment.
+    </p>
+    <p>
+      More than anything, I wanted the site to feel like a system I owned and managed myself
+      rather than something I uploaded once and forgot about.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2 class="pi-section-title">Key Features</h2>
+  <div class="pi-grid">
+    <div class="pi-card">
+      <h3>Self Hosted Website</h3>
+      <p>The portfolio is served directly from my own Raspberry Pi rather than a typical hosting platform.</p>
+    </div>
+    <div class="pi-card">
+      <h3>Live Deployment</h3>
+      <p>The project gave me experience with running a real website and updating it as an active system.</p>
+    </div>
+    <div class="pi-card">
+      <h3>Remote Management</h3>
+      <p>I can work on the site and manage the server from another machine through remote tools.</p>
+    </div>
+    <div class="pi-card">
+      <h3>Linux Server Practice</h3>
+      <p>It became a hands-on way to learn about file structure, services, networking, and troubleshooting.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="pi-section-title">Why I Built It</h2>
+  <p>
+    I did not want my portfolio to be just a collection of files uploaded to a service and left there.
+    I wanted it to feel like a real technical project in its own right. Hosting the site on a Raspberry Pi
+    gave me a reason to explore Linux, learn how web servers behave in practice, and take more ownership
+    over how the site is delivered.
+  </p>
+  <p>
+    It also made the portfolio more personal. Visitors are not just seeing a design — they are visiting
+    something that I built, deployed, and maintain on my own hardware.
+  </p>
+</section>
+
+<section>
+  <h2 class="pi-section-title">How It Works</h2>
+  <div class="pi-two-col">
+    <div class="pi-panel">
+      <h3>Hosting Setup</h3>
+      <p>
+        The website files are stored on the Raspberry Pi and served by Nginx. That means the Pi handles
+        requests for the site directly and acts as the live host for the portfolio.
+      </p>
+      <p>
+        A secure public access method makes the site reachable online without needing a more traditional
+        hosting provider.
+      </p>
+    </div>
+
+    <div class="pi-panel">
+      <h3>Development Workflow</h3>
+      <p>
+        I can edit files from another computer, push changes back to the Raspberry Pi, and then check the
+        live result in the browser. This gives me a practical workflow for development and deployment.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="pi-section-title">Technologies Used</h2>
+  <ul class="pi-list">
+    <li>Raspberry Pi running Linux</li>
+    <li>Nginx web server</li>
+    <li>Secure tunnelling / remote access tools</li>
+    <li>VS Code with Remote SSH</li>
+    <li>HTML, CSS, and a small amount of JavaScript</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="pi-section-title">What I Learned</h2>
+  <ul class="pi-list">
+    <li>Installing and configuring a web server on Linux</li>
+    <li>Understanding file structure and deployment workflow</li>
+    <li>How secure access tools can expose local services safely</li>
+    <li>Troubleshooting network and configuration issues</li>
+    <li>Designing and maintaining a multi-page website</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="pi-section-title">Why This Project Matters</h2>
+  <p>
+    This project matters because it turns the portfolio itself into part of the portfolio.
+    Instead of only showing finished web pages, it also shows that I am interested in hosting,
+    deployment, Linux administration, and learning how systems work behind the scenes.
+  </p>
+  <p>
+    It reflects the kind of work I enjoy most: building something practical, improving it over time,
+    and learning by managing a real system rather than only working in theory.
+  </p>
+</section>
+
+<section>
+  <h2 class="pi-section-title">Future Plans</h2>
+  <ul class="pi-list">
+    <li>Move from temporary public access solutions to a more permanent setup</li>
+    <li>Automate more of the deployment and startup workflow</li>
+    <li>Add more dynamic features to the website over time</li>
+    <li>Explore building a simple admin area for site updates</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="pi-section-title">Back to Projects</h2>
+  <p>
+    This Raspberry Pi hosting setup is one part of my wider portfolio, alongside my media server
+    project, software work, and game development.
+  </p>
+  <a href="projects.html" class="download-btn">Back to Projects</a>
+</section>
+
+</body>
+</html>

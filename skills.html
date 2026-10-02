@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skills</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .skills-page {
+      background:
+        radial-gradient(circle at top right, rgba(88, 166, 255, 0.08), transparent 28%),
+        linear-gradient(180deg, #0d1117 0%, #0b1220 100%);
+    }
+
+    .skills-hero {
+      width: min(1000px, 92%);
+      margin: 34px auto 12px;
+      padding: 42px 30px;
+      background: linear-gradient(135deg, rgba(31, 111, 235, 0.16), rgba(88, 166, 255, 0.05));
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 18px;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .skills-kicker {
+      display: inline-block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      color: #58a6ff;
+      margin-bottom: 12px;
+    }
+
+    .skills-hero h1 {
+      font-size: clamp(2.1rem, 4vw, 3rem);
+      margin-bottom: 12px;
+      color: #ffffff;
+    }
+
+    .skills-hero p {
+      max-width: 760px;
+      color: #b8c4d3;
+      font-size: 1.02rem;
+      margin-bottom: 0;
+    }
+
+    .skills-divider {
+      width: 110px;
+      height: 4px;
+      border-radius: 999px;
+      margin-top: 18px;
+      background: linear-gradient(90deg, #58a6ff, #1f6feb);
+      box-shadow: 0 0 18px rgba(88, 166, 255, 0.28);
+    }
+
+    .skills-section {
+      width: min(1000px, 92%);
+      margin: auto;
+      padding: 22px 0 28px;
+    }
+
+    .skills-section + .skills-section {
+      border-top: 1px solid rgba(88, 166, 255, 0.08);
+      margin-top: 6px;
+      padding-top: 30px;
+    }
+
+    .skills-section h2 {
+      position: relative;
+      padding-left: 14px;
+      color: #ffffff;
+      margin-bottom: 16px;
+    }
+
+    .skills-section h2::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 4px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #58a6ff, #1f6feb);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .skills-card {
+      background: linear-gradient(180deg, rgba(22, 27, 34, 0.96), rgba(16, 21, 29, 0.98));
+      border: 1px solid rgba(88, 166, 255, 0.12);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .skills-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(88, 166, 255, 0.34);
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.36), 0 0 18px rgba(88, 166, 255, 0.08);
+    }
+
+    .skills-card h3 {
+      color: #ffffff;
+      margin-bottom: 12px;
+      font-size: 1.05rem;
+    }
+
+    .skills-card ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .skills-card li {
+      color: #c9d1d9;
+      background: rgba(88, 166, 255, 0.04);
+      border: 1px solid rgba(88, 166, 255, 0.08);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .skills-summary {
+      background: linear-gradient(180deg, rgba(22, 27, 34, 0.96), rgba(16, 21, 29, 0.98));
+      border: 1px solid rgba(88, 166, 255, 0.12);
+      border-radius: 16px;
+      padding: 22px;
+      color: #c9d1d9;
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28);
+    }
+
+    @media (max-width: 640px) {
+      .skills-hero {
+        padding: 32px 22px;
+      }
+
+      .skills-card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body class="skills-page">
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="projects.html">Projects</a>
+    <a href="final-year-project.html">Final Year Project</a>
+    <a href="skills.html" class="active">Skills</a>
+  </nav>
+</header>
+
+<div class="skills-hero">
+  <span class="skills-kicker">Technical Skills</span>
+  <h1>Skills</h1>
+  <p>
+    These are the main technical areas I have been developing through university work,
+    personal projects, self-hosting, game development, and hands-on experimentation.
+  </p>
+  <div class="skills-divider"></div>
+</div>
+
+<section class="skills-section">
+  <div class="skills-summary">
+    <p>
+      My skills have grown through building real projects rather than only studying theory.
+      A lot of what I have learned comes from hosting my own website, building a Raspberry Pi
+      media server, creating automation tools, and developing games and applications as I continue
+      to improve my workflow and technical confidence.
+    </p>
+  </div>
+</section>
+
+<section class="skills-section">
+  <h2>Web Development</h2>
+  <div class="skills-grid">
+    <div class="skills-card">
+      <h3>Frontend Skills</h3>
+      <ul>
+        <li>HTML5</li>
+        <li>CSS3</li>
+        <li>Responsive layout design</li>
+        <li>Page structure and visual hierarchy</li>
+        <li>Custom page styling and themed layouts</li>
+      </ul>
+    </div>
+
+    <div class="skills-card">
+      <h3>Web Project Work</h3>
+      <ul>
+        <li>Multi-page website development</li>
+        <li>Portfolio site design</li>
+        <li>Navigation and content organisation</li>
+        <li>Basic JavaScript for interactivity</li>
+        <li>Live website updates and maintenance</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="skills-section">
+  <h2>Server, Linux, and Hosting</h2>
+  <div class="skills-grid">
+    <div class="skills-card">
+      <h3>Linux and Server Skills</h3>
+      <ul>
+        <li>Linux command line</li>
+        <li>Basic server administration</li>
+        <li>Nginx / web server setup</li>
+        <li>SSH and remote access workflows</li>
+        <li>File structure and deployment workflow</li>
+      </ul>
+    </div>
+
+    <div class="skills-card">
+      <h3>Self Hosting</h3>
+      <ul>
+        <li>Raspberry Pi hosting</li>
+        <li>Public tunnel / remote exposure setup</li>
+        <li>Website hosting from personal hardware</li>
+        <li>Service troubleshooting</li>
+        <li>Managing multi-purpose Raspberry Pi systems</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="skills-section">
+  <h2>Networking and System Setup</h2>
+  <div class="skills-grid">
+    <div class="skills-card">
+      <h3>Networking Skills</h3>
+      <ul>
+        <li>Local network setup concepts</li>
+        <li>Remote access configuration</li>
+        <li>Port forwarding understanding</li>
+        <li>Stable device access and server connectivity</li>
+        <li>Troubleshooting practical connection issues</li>
+      </ul>
+    </div>
+
+    <div class="skills-card">
+      <h3>System Workflow</h3>
+      <ul>
+        <li>External storage organisation</li>
+        <li>USB media transfer workflows</li>
+        <li>Service monitoring and management</li>
+        <li>General system maintenance</li>
+        <li>Problem solving through iterative testing</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="skills-section">
+  <h2>Programming and Automation</h2>
+  <div class="skills-grid">
+    <div class="skills-card">
+      <h3>Programming</h3>
+      <ul>
+        <li>JavaScript</li>
+        <li>Python</li>
+        <li>Basic scripting for automation</li>
+        <li>Building simple utility tools</li>
+        <li>Desktop tool development with Tkinter</li>
+      </ul>
+    </div>
+
+    <div class="skills-card">
+      <h3>Automation and Tools</h3>
+      <ul>
+        <li>rsync-based transfer workflows</li>
+        <li>File copy and deployment tasks</li>
+        <li>Custom management tool design</li>
+        <li>Workflow simplification through scripting</li>
+        <li>Packaging Python tools with PyInstaller</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="skills-section">
+  <h2>Game Development</h2>
+  <div class="skills-grid">
+    <div class="skills-card">
+      <h3>Game Development Skills</h3>
+      <ul>
+        <li>Unity</li>
+        <li>Gameplay prototyping</li>
+        <li>Game concept development</li>
+        <li>Interactive design thinking</li>
+        <li>Stealth and time-based mechanic exploration</li>
+      </ul>
+    </div>
+
+    <div class="skills-card">
+      <h3>Related Interests</h3>
+      <ul>
+        <li>VR development experiments</li>
+        <li>World and atmosphere design</li>
+        <li>Designing interactive systems</li>
+        <li>Learning through small prototypes</li>
+        <li>Expanding into new engines and tools</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="skills-section">
+  <h2>Current Strengths</h2>
+  <div class="skills-summary">
+    <p>
+      Right now, my strongest areas are practical web development, Raspberry Pi hosting,
+      Linux-based project setup, automation workflows, and building projects that connect
+      software with real deployment and system management. I also have a strong interest in
+      game development and enjoy designing projects that combine creativity with technical problem solving.
+    </p>
+  </div>
+</section>
+
+</body>
+</html>

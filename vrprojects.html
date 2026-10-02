@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>VR Project Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+  <style>
+    :root {
+      --vr-bg: #070b16;
+      --vr-surface: rgba(12, 18, 34, 0.78);
+      --vr-surface-strong: rgba(16, 24, 45, 0.92);
+      --vr-border: rgba(139, 233, 253, 0.18);
+      --vr-text: #eef4ff;
+      --vr-muted: #aab7d6;
+      --vr-accent: #8be9fd;
+      --vr-accent-2: #7c5cff;
+      --vr-accent-3: #61b8ff;
+      --vr-danger: #ff5f7a;
+      --vr-glow: rgba(139, 233, 253, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(124, 92, 255, 0.14), transparent 24%),
+        radial-gradient(circle at top left, rgba(97, 184, 255, 0.12), transparent 28%),
+        linear-gradient(180deg, #050812 0%, #0a1020 100%);
+      color: var(--vr-text);
+      overflow: hidden;
+    }
+
+    .ui-shell {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: flex-start;
+      pointer-events: none;
+    }
+
+    .ui-bar,
+    .ui-tip {
+      pointer-events: auto;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(135deg, rgba(16, 24, 45, 0.82), rgba(8, 12, 24, 0.72));
+      border: 1px solid var(--vr-border);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.34), 0 0 24px rgba(139,233,253,0.06);
+      border-radius: 16px;
+    }
+
+    .ui-bar {
+      padding: 14px 16px;
+      max-width: 560px;
+    }
+
+    .ui-kicker {
+      display: inline-block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 700;
+      color: var(--vr-accent);
+      margin-bottom: 8px;
+    }
+
+    .ui-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .ui-links {
+      color: var(--vr-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .ui-links a {
+      color: var(--vr-accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .ui-links a:hover {
+      color: #ffffff;
+    }
+
+    .ui-tip {
+      padding: 14px 16px;
+      min-width: 250px;
+      max-width: 330px;
+    }
+
+    .ui-tip strong {
+      display: block;
+      color: #ffffff;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .ui-tip p {
+      margin: 0;
+      color: var(--vr-muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .ui-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .ui-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #d7e7ff;
+      background: rgba(139, 233, 253, 0.08);
+      border: 1px solid rgba(139, 233, 253, 0.14);
+    }
+
+    .screen-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      background:
+        radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.25) 100%);
+    }
+
+    @media (max-width: 900px) {
+      .ui-shell {
+        flex-direction: column;
+      }
+
+      .ui-bar,
+      .ui-tip {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="ui-shell">
+    <div class="ui-bar">
+      <span class="ui-kicker">Interactive VR Space</span>
+      <div class="ui-title">VR Project Library</div>
+      <div class="ui-links">
+        <a href="vr-site.html">← Back to VR Office</a> |
+        <a href="index.html">Back to Site</a>
+      </div>
+      <div class="ui-pill-row">
+        <span class="ui-pill">A-Frame</span>
+        <span class="ui-pill">WebXR</span>
+        <span class="ui-pill">Interactive Portfolio</span>
+      </div>
+    </div>
+
+    <div class="ui-tip">
+      <strong>How to explore</strong>
+      <p>
+        Use WASD to move and your mouse to look around. Click a book to open its project
+        details. Press <strong>Escape</strong> or click the close button to dismiss the info panel.
+      </p>
+    </div>
+  </div>
+
+  <div class="screen-vignette"></div>
+
+  <a-scene
+    background="color: #11182e"
+    renderer="antialias: true; colorManagement: true"
+    vr-mode-ui="enabled: true"
+    fog="type: linear; color: #0c1224; near: 4; far: 14"
+  >
+    <a-assets></a-assets>
+
+    <!-- CAMERA + RIG -->
+    <a-entity id="rig" position="0 1.6 3">
+      <a-entity id="playerCamera"
+                camera
+                look-controls
+                wasd-controls
+                cursor="rayOrigin: mouse"
+                raycaster="objects: .clickable">
+
+        <!-- INFO PANEL -->
+        <a-entity id="infoPanel" visible="false" position="0 0 -1.85">
+          <!-- Back glow -->
+          <a-plane width="3.1" height="1.95"
+                   material="shader: flat; color: #7c5cff; opacity: 0.08">
+          </a-plane>
+
+          <!-- Main panel -->
+          <a-plane width="2.95" height="1.8"
+                   material="shader: flat; color: #12182b; opacity: 0.97">
+          </a-plane>
+
+          <!-- Accent strip -->
+          <a-plane width="2.95" height="0.08"
+                   position="0 0.86 0.01"
+                   material="shader: flat; color: #8be9fd; opacity: 0.95">
+          </a-plane>
+
+          <!-- Close button -->
+          <a-plane id="closePanelButton" class="clickable"
+                   position="1.27 0.67 0.02"
+                   width="0.26" height="0.26"
+                   material="shader: flat; color: #ff5f7a">
+          </a-plane>
+          <a-entity position="1.27 0.67 0.03"
+                    text="value: X; align: center; width: 2; color: #ffffff">
+          </a-entity>
+
+          <!-- Title -->
+          <a-entity id="infoTitle"
+                    position="0 0.56 0.03"
+                    text="value: Project Title; align: center; width: 3.15; color: #eef4ff; wrapCount: 28">
+          </a-entity>
+
+          <!-- Subtitle -->
+          <a-entity id="infoSubtitle"
+                    position="0 0.34 0.03"
+                    text="value: Category / Focus; align: center; width: 2.7; color: #8be9fd; wrapCount: 34">
+          </a-entity>
+
+          <!-- Body -->
+          <a-entity id="infoBody"
+                    position="0 -0.1 0.03"
+                    text="value: Project details will appear here.; align: left; width: 2.62; wrapCount: 40; color: #dbe7ff; lineHeight: 36">
+          </a-entity>
+        </a-entity>
+      </a-entity>
+    </a-entity>
+
+    <!-- LIGHTING -->
+    <a-entity light="type: ambient; intensity: 0.35; color: #dfe8ff"></a-entity>
+    <a-entity light="type: point; intensity: 1.1; distance: 12; decay: 2; color: #fff4dd"
+              position="0 2.7 0"></a-entity>
+    <a-entity light="type: point; intensity: 0.6; distance: 10; decay: 2; color: #7c5cff"
+              position="-2 1.6 1"></a-entity>
+    <a-entity light="type: point; intensity: 0.5; distance: 10; decay: 2; color: #61b8ff"
+              position="2 1.6 1"></a-entity>
+
+    <!-- ROOM -->
+    <a-box position="0 1.5 0"
+           width="10" height="3" depth="10"
+           material="shader: flat; color: #12182a; side: back"></a-box>
+
+    <!-- FLOOR -->
+    <a-plane rotation="-90 0 0"
+             width="10" height="10"
+             material="shader: flat; color: #0e1322"></a-plane>
+
+    <!-- FLOOR ACCENT -->
+    <a-plane rotation="-90 0 0"
+             position="0 0.01 -0.6"
+             width="6.2" height="6.2"
+             material="shader: flat; color: #121b31; opacity: 0.85"></a-plane>
+
+    <!-- BACK WALL FEATURE -->
+    <a-plane position="0 1.95 -2.39"
+             width="4.8" height="0.55"
+             material="shader: flat; color: #141d34; opacity: 0.95">
+    </a-plane>
+    <a-entity position="0 1.95 -2.28"
+              text="value: VR PROJECT LIBRARY; align: center; width: 5; color: #8be9fd">
+    </a-entity>
+
+    <!-- BOOKSHELF WALL -->
+    <a-box position="0 1.4 -2.5"
+           width="5.2" height="2.1" depth="0.22"
+           material="shader: flat; color: #1a2038"></a-box>
+
+    <!-- SHELVES -->
+    <a-box position="0 2.08 -2.4" width="4.7" height="0.08" depth="0.3"
+           material="shader: flat; color: #30395d"></a-box>
+    <a-box position="0 1.58 -2.4" width="4.7" height="0.08" depth="0.3"
+           material="shader: flat; color: #30395d"></a-box>
+    <a-box position="0 1.08 -2.4" width="4.7" height="0.08" depth="0.3"
+           material="shader: flat; color: #30395d"></a-box>
+
+    <!-- TOP SHELF BOOKS -->
+    <a-box id="bookSite" class="clickable"
+           position="-1.65 2.18 -2.25"
+           width="0.25" height="0.5" depth="0.15"
+           material="shader: flat; color: #58a6ff"></a-box>
+    <a-entity position="-1.65 2.18 -2.16"
+              rotation="0 0 90"
+              text="value: Site; align: center; width: 2; color: #eef4ff">
+    </a-entity>
+
+    <a-box id="bookVRDemo" class="clickable"
+           position="-0.75 2.18 -2.25"
+           width="0.25" height="0.5" depth="0.15"
+           material="shader: flat; color: #50fae6"></a-box>
+    <a-entity position="-0.75 2.18 -2.16"
+              rotation="0 0 90"
+              text="value: VR Office; align: center; width: 2; color: #0f1726">
+    </a-entity>
+
+    <a-box id="bookGame" class="clickable"
+           position="0.15 2.18 -2.25"
+           width="0.25" height="0.5" depth="0.15"
+           material="shader: flat; color: #bd93f9"></a-box>
+    <a-entity position="0.15 2.18 -2.16"
+              rotation="0 0 90"
+              text="value: Game; align: center; width: 2; color: #eef4ff">
+    </a-entity>
+
+    <!-- MIDDLE SHELF BOOKS -->
+    <a-box id="bookDataViz" class="clickable"
+           position="-1.2 1.68 -2.25"
+           width="0.25" height="0.5" depth="0.15"
+           material="shader: flat; color: #f6d365"></a-box>
+    <a-entity position="-1.2 1.68 -2.16"
+              rotation="0 0 90"
+              text="value: Data; align: center; width: 2; color: #1b2238">
+    </a-entity>
+
+    <a-box id="TemporalThiefGame" class="clickable"
+           position="-0.3 1.68 -2.25"
+           width="0.25" height="0.5" depth="0.15"
+           material="shader: flat; color: #8be9fd"></a-box>
+    <a-entity position="-0.3 1.68 -2.16"
+              rotation="0 0 90"
+              text="value: Temporal; align: center; width: 2; color: #1b2238">
+    </a-entity>
+
+    <!-- LOWER DECOR BOOKS -->
+    <a-box position="0.95 1.18 -2.25"
+           width="0.22" height="0.42" depth="0.15"
+           material="shader: flat; color: #ff79c6"></a-box>
+    <a-box position="1.2 1.18 -2.25"
+           width="0.22" height="0.42" depth="0.15"
+           material="shader: flat; color: #61b8ff"></a-box>
+    <a-box position="1.45 1.18 -2.25"
+           width="0.22" height="0.42" depth="0.15"
+           material="shader: flat; color: #6ef2a5"></a-box>
+
+    <!-- SIDE TABLE -->
+    <a-cylinder position="1.95 0.45 -1.8" radius="0.42" height="0.1"
+                material="shader: flat; color: #2b3453"></a-cylinder>
+    <a-cylinder position="1.95 0.24 -1.8" radius="0.06" height="0.32"
+                material="shader: flat; color: #1c2338"></a-cylinder>
+
+    <!-- LAMP -->
+    <a-cone position="1.95 0.72 -1.8" radius-bottom="0.25" radius-top="0.03" height="0.35"
+            material="shader: flat; color: #8be9fd"></a-cone>
+    <a-entity light="type: point; intensity: 0.55; distance: 5; decay: 2; color: #8be9fd"
+              position="1.95 0.66 -1.8"></a-entity>
+
+    <!-- FRONT DECOR PANEL -->
+    <a-plane position="-2.25 1.45 -0.8"
+             rotation="0 24 0"
+             width="1.3" height="1.1"
+             material="shader: flat; color: #131b31; opacity: 0.95">
+    </a-plane>
+    <a-entity position="-2.1 1.62 -0.72"
+              rotation="0 24 0"
+              text="value: INTERACTIVE\\nSHOWCASE; align: center; width: 2.2; color: #8be9fd">
+    </a-entity>
+    <a-entity position="-2.1 1.28 -0.72"
+              rotation="0 24 0"
+              text="value: A small VR library space for browsing project ideas and experiments.; align: center; width: 2.1; wrapCount: 18; color: #cddcff">
+    </a-entity>
+
+  </a-scene>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const bookSite = document.getElementById("bookSite");
+      const bookVRDemo = document.getElementById("bookVRDemo");
+      const bookGame = document.getElementById("bookGame");
+      const bookDataViz = document.getElementById("bookDataViz");
+      const TemporalThiefGame = document.getElementById("TemporalThiefGame");
+
+      const infoPanel = document.getElementById("infoPanel");
+      const infoTitle = document.getElementById("infoTitle");
+      const infoSubtitle = document.getElementById("infoSubtitle");
+      const infoBody = document.getElementById("infoBody");
+      const closePanelButton = document.getElementById("closePanelButton");
+
+      const projectDetails = {
+        bookSite: {
+          title: "Portfolio Website",
+          subtitle: "Web Development / Self Hosting",
+          body: [
+            "A personal portfolio built to showcase my projects, technical skills, and development work.",
+            "",
+            "Highlights:",
+            "• Hosted as part of my Raspberry Pi setup.",
+            "• Uses a cleaner modern layout across the site.",
+            "• Includes themed project pages and a VR section.",
+            "",
+            "Focus: design, structure, and presentation."
+          ].join("\n")
+        },
+        bookVRDemo: {
+          title: "VR Office Experience",
+          subtitle: "A-Frame / WebXR Experiment",
+          body: [
+            "An interactive VR office scene designed as a more playful way to explore my portfolio.",
+            "",
+            "Features:",
+            "• Room-scale style virtual environment.",
+            "• Clickable objects and environmental interactions.",
+            "• Navigation into this VR project library.",
+            "",
+            "Tech: A-Frame, WebGL, browser-based 3D."
+          ].join("\n")
+        },
+        bookGame: {
+          title: "Mini Browser Game",
+          subtitle: "Gameplay Prototype",
+          body: [
+            "A small browser game concept focused on creating a simple but enjoyable gameplay loop.",
+            "",
+            "Highlights:",
+            "• Lightweight interactive design.",
+            "• Prototype-first development approach.",
+            "• Focus on moment-to-moment player feedback.",
+            "",
+            "Tech: JavaScript, browser rendering."
+          ].join("\n")
+        },
+        bookDataViz: {
+          title: "Data Visualization Dashboard",
+          subtitle: "UI / Information Design",
+          body: [
+            "A concept for presenting information visually through a cleaner dashboard interface.",
+            "",
+            "Highlights:",
+            "• Interactive data-focused layout ideas.",
+            "• Clear visual structure and filtering concepts.",
+            "• Focus on readability and presentation.",
+            "",
+            "Tech: JavaScript-driven UI ideas."
+          ].join("\n")
+        },
+        TemporalThiefGame: {
+          title: "Temporal Thief",
+          subtitle: "Final Year Game Project",
+          body: [
+            "Temporal Thief is my final year project, built around stealth gameplay and time manipulation.",
+            "",
+            "Highlights:",
+            "• Time-based mechanic design.",
+            "• Stronger focus on atmosphere and tension.",
+            "• Built as a more ambitious game concept.",
+            "",
+            "Direction: a stealth experience with a distinct gameplay identity."
+          ].join("\n")
+        }
+      };
+
+      function openProject(bookId) {
+        const project = projectDetails[bookId];
+        if (!project || !infoPanel || !infoTitle || !infoSubtitle || !infoBody) return;
+
+        infoTitle.setAttribute("text", {
+          value: project.title,
+          align: "center",
+          width: 3.15,
+          color: "#eef4ff",
+          wrapCount: 28
+        });
+
+        infoSubtitle.setAttribute("text", {
+          value: project.subtitle,
+          align: "center",
+          width: 2.7,
+          color: "#8be9fd",
+          wrapCount: 34
+        });
+
+        infoBody.setAttribute("text", {
+          value: project.body,
+          align: "left",
+          width: 2.62,
+          wrapCount: 40,
+          color: "#dbe7ff",
+          lineHeight: 36
+        });
+
+        infoPanel.setAttribute("visible", true);
+      }
+
+      function closePanel() {
+        if (infoPanel) infoPanel.setAttribute("visible", false);
+      }
+
+      if (bookSite) bookSite.addEventListener("click", () => openProject("bookSite"));
+      if (bookVRDemo) bookVRDemo.addEventListener("click", () => openProject("bookVRDemo"));
+      if (bookGame) bookGame.addEventListener("click", () => openProject("bookGame"));
+      if (bookDataViz) bookDataViz.addEventListener("click", () => openProject("bookDataViz"));
+      if (TemporalThiefGame) TemporalThiefGame.addEventListener("click", () => openProject("TemporalThiefGame"));
+
+      if (closePanelButton) closePanelButton.addEventListener("click", closePanel);
+
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closePanel();
+      });
+    });
+  </script>
+
+</body>
+</html>

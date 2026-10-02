@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plex Media Server</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    :root {
+      --plex-bg: #0b0b0b;
+      --plex-surface: #151515;
+      --plex-surface-2: #1d1d1d;
+      --plex-border: #2b2b2b;
+      --plex-text: #f5f5f5;
+      --plex-muted: #b6b6b6;
+      --plex-accent: #e5a00d;
+      --plex-accent-2: #f3b21f;
+      --plex-shadow: rgba(229, 160, 13, 0.18);
+    }
+
+    body.plex-page {
+      background:
+        radial-gradient(circle at top right, rgba(229,160,13,0.08), transparent 25%),
+        linear-gradient(180deg, #0a0a0a 0%, #111111 100%);
+      color: var(--plex-text);
+    }
+
+    .plex-page .site-header {
+      background: rgba(10, 10, 10, 0.95);
+      border-bottom: 1px solid rgba(229, 160, 13, 0.18);
+      backdrop-filter: blur(8px);
+    }
+
+    .plex-page .nav a:hover {
+      background: var(--plex-accent);
+      color: #111;
+    }
+
+    .plex-page .nav a:hover::after {
+      box-shadow: 0 0 14px rgba(229, 160, 13, 0.45);
+      border-color: rgba(229, 160, 13, 0.35);
+    }
+
+    .plex-page .nav a.active {
+      background: linear-gradient(135deg, var(--plex-accent), var(--plex-accent-2));
+      color: #111;
+    }
+
+    .plex-page .nav a.active::after {
+      border-color: rgba(229, 160, 13, 0.55);
+      box-shadow: 0 0 10px rgba(229, 160, 13, 0.35);
+    }
+
+    .plex-hero {
+      width: min(1000px, 92%);
+      margin: 35px auto 20px;
+      padding: 42px 32px;
+      border: 1px solid rgba(229, 160, 13, 0.18);
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(229,160,13,0.10), rgba(255,255,255,0.02)),
+        #111111;
+      box-shadow: 0 24px 50px rgba(0,0,0,0.45);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .plex-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(229,160,13,0.04), transparent);
+      pointer-events: none;
+    }
+
+    .plex-kicker {
+      display: inline-block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--plex-accent-2);
+      margin-bottom: 12px;
+    }
+
+    .plex-hero h1 {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      margin-bottom: 14px;
+      line-height: 1.1;
+      color: #fff;
+    }
+
+    .plex-hero p {
+      max-width: 760px;
+      font-size: 1.05rem;
+      color: #d5d5d5;
+      margin-bottom: 0;
+    }
+
+    .plex-divider {
+      width: 110px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--plex-accent), var(--plex-accent-2));
+      margin: 20px 0 0;
+      box-shadow: 0 0 16px var(--plex-shadow);
+    }
+
+    .plex-page section {
+      width: min(1000px, 92%);
+      padding: 26px 0;
+    }
+
+    .plex-page section + section {
+      border-top: 1px solid rgba(229, 160, 13, 0.08);
+      margin-top: 6px;
+      padding-top: 28px;
+    }
+
+    .plex-section-title {
+      font-size: 1.45rem;
+      margin-bottom: 14px;
+      color: #fff;
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .plex-section-title::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 4px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--plex-accent), var(--plex-accent-2));
+    }
+
+    .plex-page p {
+      color: var(--plex-muted);
+    }
+
+    .plex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 12px;
+    }
+
+    .plex-card {
+      background: linear-gradient(180deg, #181818 0%, #131313 100%);
+      border: 1px solid rgba(229, 160, 13, 0.12);
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.28);
+    }
+
+    .plex-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(229, 160, 13, 0.38);
+      box-shadow: 0 20px 38px rgba(0,0,0,0.40), 0 0 18px rgba(229,160,13,0.10);
+    }
+
+    .plex-card h3 {
+      margin-bottom: 10px;
+      color: #fff;
+      font-size: 1.05rem;
+    }
+
+    .plex-card p {
+      margin-bottom: 0;
+      color: #c8c8c8;
+      font-size: 0.95rem;
+    }
+
+    .plex-highlight {
+      background: linear-gradient(180deg, rgba(229,160,13,0.12), rgba(229,160,13,0.04));
+      border: 1px solid rgba(229,160,13,0.18);
+      border-radius: 16px;
+      padding: 22px;
+      margin-top: 10px;
+    }
+
+    .plex-highlight p:last-child {
+      margin-bottom: 0;
+    }
+
+    .plex-list {
+      list-style: none;
+      padding-left: 0;
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .plex-list li {
+      background: var(--plex-surface);
+      border: 1px solid rgba(229,160,13,0.10);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #d8d8d8;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .plex-list li:hover {
+      border-color: rgba(229,160,13,0.28);
+      transform: translateX(4px);
+    }
+
+    .plex-two-col {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .plex-panel {
+      background: linear-gradient(180deg, #171717 0%, #121212 100%);
+      border: 1px solid rgba(229,160,13,0.12);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 16px 30px rgba(0,0,0,0.28);
+    }
+
+    .plex-panel h3 {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .plex-page .download-btn {
+      background: linear-gradient(135deg, var(--plex-accent), var(--plex-accent-2));
+      color: #111;
+      border: 1px solid #d89711;
+      box-shadow: 0 14px 28px rgba(229,160,13,0.18);
+    }
+
+    .plex-page .download-btn:hover {
+      box-shadow: 0 16px 32px rgba(229,160,13,0.26);
+    }
+
+    .plex-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .plex-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(229,160,13,0.10);
+      border: 1px solid rgba(229,160,13,0.16);
+      color: #f0cf7d;
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 780px) {
+      .plex-two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .plex-hero {
+        padding: 30px 22px;
+      }
+    }
+  </style>
+</head>
+<body class="plex-page">
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="projects.html" class="active">Projects</a>
+    <a href="final-year-project.html">Final Year Project</a>
+    <a href="skills.html">Skills</a>
+  </nav>
+</header>
+
+<div class="plex-hero">
+  <span class="plex-kicker">Home Server Project</span>
+  <h1>Raspberry Pi Plex Media Server</h1>
+  <p>
+    A self-hosted media server built on a Raspberry Pi, designed for local streaming,
+    remote access, organised storage, and a cleaner workflow for importing and managing media.
+    Over time, the project expanded beyond Plex into a broader home server setup that also
+    includes website hosting, automation, and custom management tools.
+  </p>
+  <div class="plex-divider"></div>
+
+  <div class="plex-meta">
+    <span class="plex-tag">Raspberry Pi</span>
+    <span class="plex-tag">Plex</span>
+    <span class="plex-tag">Linux</span>
+    <span class="plex-tag">Nginx</span>
+    <span class="plex-tag">Python</span>
+    <span class="plex-tag">Automation</span>
+  </div>
+</div>
+
+<section>
+  <h2 class="plex-section-title">Project Overview</h2>
+  <div class="plex-highlight">
+    <p>
+      This project started as a way to build a low-power home media server that could run
+      continuously, organise films and TV content, and stream media more conveniently than
+      manually browsing files. It later became a more complete multi-purpose Raspberry Pi setup
+      that also hosts a website, supports remote access, and uses automation to improve the
+      overall workflow.
+    </p>
+    <p>
+      What makes this project stand out is that it combines hardware setup, Linux server
+      administration, media organisation, storage management, scripting, and Python tooling
+      into one practical system.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Key Features</h2>
+  <div class="plex-grid">
+    <div class="plex-card">
+      <h3>Media Streaming</h3>
+      <p>Organises and streams films and TV content through a clean media library interface.</p>
+    </div>
+    <div class="plex-card">
+      <h3>Remote Access</h3>
+      <p>Designed so the server can be reached and managed beyond the local network.</p>
+    </div>
+    <div class="plex-card">
+      <h3>USB Import Workflow</h3>
+      <p>Uses a transfer-drive process to move new media into the correct library locations.</p>
+    </div>
+    <div class="plex-card">
+      <h3>Custom Management Tool</h3>
+      <p>A Python desktop utility was built to make common server tasks easier to control.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="plex-section-title">What the System Does</h2>
+  <ul class="plex-list">
+    <li>Hosts a Plex media library for films and TV shows</li>
+    <li>Streams media across the home network</li>
+    <li>Supports remote access as part of the wider home server setup</li>
+    <li>Hosts my portfolio website on the same Raspberry Pi</li>
+    <li>Uses external storage to keep media organised</li>
+    <li>Uses a USB-based workflow for importing new content</li>
+    <li>Can be managed from another computer using custom tools and scripts</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Hardware and Software</h2>
+
+  <div class="plex-two-col">
+    <div class="plex-panel">
+      <h3>Hardware Used</h3>
+      <ul class="plex-list">
+        <li>Raspberry Pi</li>
+        <li>External hard drives for long-term media storage</li>
+        <li>USB transfer drive for importing new content</li>
+        <li>Ethernet connection for a more stable setup</li>
+        <li>Reliable power supply for 24/7 server use</li>
+      </ul>
+    </div>
+
+    <div class="plex-panel">
+      <h3>Software Used</h3>
+      <ul class="plex-list">
+        <li>Raspberry Pi OS / Linux</li>
+        <li>Plex Media Server</li>
+        <li>Nginx</li>
+        <li>Tailscale</li>
+        <li>SSH</li>
+        <li>rsync</li>
+        <li>Python</li>
+        <li>Tkinter</li>
+        <li>PyInstaller</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Plex Setup and Library Structure</h2>
+  <p>
+    Plex Media Server was configured on the Raspberry Pi to organise and stream a personal
+    media collection through a cleaner interface than raw file browsing. Instead of manually
+    navigating folders, Plex provides posters, metadata, categories, and a more polished
+    viewing experience.
+  </p>
+  <p>
+    The server libraries were organised into separate areas for films and TV content. Keeping
+    the storage structured properly improves library management and helps Plex recognise content
+    more reliably.
+  </p>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Website Hosting on the Same Raspberry Pi</h2>
+  <p>
+    One of the more interesting parts of this project is that the Raspberry Pi is not only used
+    for media streaming. It also hosts my portfolio website using Nginx. Running both services on
+    the same machine gave me more hands-on experience with Linux server setup and helped me better
+    understand how multiple services can coexist on one device.
+  </p>
+  <p>
+    This made the project more than just a Plex install. It became a real home server environment
+    that I actively manage and improve.
+  </p>
+</section>
+
+<section>
+  <h2 class="plex-section-title">USB Media Transfer Workflow</h2>
+  <p>
+    To make the process of adding new content cleaner, I designed a USB transfer workflow.
+    New files can be prepared on a separate drive and then imported into the server rather
+    than managing the main storage directly every time.
+  </p>
+
+  <div class="plex-grid" style="margin-top:18px;">
+    <div class="plex-card">
+      <h3>Step 1</h3>
+      <p>Place new films or TV episodes onto the transfer drive in the correct folder structure.</p>
+    </div>
+    <div class="plex-card">
+      <h3>Step 2</h3>
+      <p>Connect the transfer drive to the Raspberry Pi when new content needs to be imported.</p>
+    </div>
+    <div class="plex-card">
+      <h3>Step 3</h3>
+      <p>Run the import process so files are copied to the correct library locations automatically.</p>
+    </div>
+    <div class="plex-card">
+      <h3>Step 4</h3>
+      <p>Refresh or rescan content so the new media appears correctly in the library.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Automation Script</h2>
+  <p>
+    A script was created to automate the media import workflow. Instead of manually moving
+    files every time, the script checks that the transfer drive is available, copies content
+    into the correct locations, avoids unnecessary overwrites, and can show transfer progress.
+  </p>
+  <p>
+    This made the server feel much more complete and practical to use. It also reduced repetitive
+    manual work and lowered the chance of mistakes during larger imports.
+  </p>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Custom Management Tool</h2>
+  <p>
+    To improve day-to-day usability, I created a Python-based management application that could
+    control common server tasks from another computer. This was useful because it removed the need
+    to manually type the same commands repeatedly into a terminal.
+  </p>
+
+  <ul class="plex-list">
+    <li>Open Plex quickly from another machine</li>
+    <li>Open the hosted website</li>
+    <li>Trigger media imports</li>
+    <li>Copy website files between the Raspberry Pi and a PC</li>
+    <li>Check service status</li>
+    <li>Open an SSH session</li>
+    <li>Restart or shut down the Raspberry Pi</li>
+  </ul>
+
+  <p>
+    Building this tool added another layer to the project by combining server administration
+    with desktop Python development.
+  </p>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Challenges and Problem Solving</h2>
+
+  <div class="plex-grid">
+    <div class="plex-card">
+      <h3>Power Stability</h3>
+      <p>Power issues caused instability early on, which affected storage reliability and transfers. Improving the power setup made the system more dependable.</p>
+    </div>
+    <div class="plex-card">
+      <h3>Changing Local Address</h3>
+      <p>The server originally received changing network details after reboot, which caused connection problems. Fixing that made access much more reliable.</p>
+    </div>
+    <div class="plex-card">
+      <h3>USB Mounting</h3>
+      <p>The transfer drive did not always behave perfectly, so the import process had to account for mounting issues and edge cases.</p>
+    </div>
+    <div class="plex-card">
+      <h3>Library Refreshing</h3>
+      <p>Some imported files needed a manual refresh before appearing in the media library, which highlighted the need for better automation.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2 class="plex-section-title">What I Learned</h2>
+  <ul class="plex-list">
+    <li>How to manage services on a Raspberry Pi running Linux</li>
+    <li>How to structure media libraries for cleaner organisation and recognition</li>
+    <li>How hosting, remote access, and streaming can work together on one device</li>
+    <li>How scripting can improve repetitive workflows</li>
+    <li>How to build a supporting desktop tool around a server project</li>
+    <li>How to troubleshoot practical issues involving power, storage, and networking</li>
+  </ul>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Future Direction</h2>
+  <div class="plex-highlight">
+    <p>
+      One of my long-term goals is to move beyond Plex and build a more custom private streaming
+      platform for personal use. The current Plex server works well as a foundation, but I would
+      like more control over the user experience, interface design, features, and overall workflow.
+    </p>
+    <p>
+      The idea would be to gradually evolve this project into a fully customisable streaming service
+      with its own front end, media organisation system, and private features designed around how I
+      want the platform to behave. That would turn the project from a self-hosted media server into
+      something closer to a complete custom streaming platform.
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Why This Project Matters</h2>
+  <p>
+    This project is important to me because it combines several areas I enjoy: building practical
+    systems, learning through experimentation, improving workflows, and solving technical problems
+    over time. It also shows that I am interested in more than one-off code exercises — I like
+    building systems that are real, useful, and actively maintained.
+  </p>
+  <p>
+    Even though it began as a home media server, it grew into a broader project involving Linux,
+    storage, networking, automation, hosting, and Python tooling.
+  </p>
+</section>
+
+<section>
+  <h2 class="plex-section-title">Back to Projects</h2>
+  <p>
+    This project is part of a wider collection of work on my portfolio, including Raspberry Pi
+    hosting, software projects, and game development work.
+  </p>
+  <a href="projects.html" class="download-btn">Back to Projects</a>
+</section>
+
+</body>
+</html>

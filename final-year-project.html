@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temporal Thief</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    body.temporal-page {
+      background:
+        radial-gradient(circle at top, rgba(170, 90, 255, 0.22), transparent 30%),
+        radial-gradient(circle at 80% 20%, rgba(0, 255, 255, 0.08), transparent 20%),
+        linear-gradient(180deg, #08050f 0%, #12081d 45%, #09040e 100%);
+      color: #f3ecff;
+    }
+
+    .site-header {
+      background: rgba(18, 10, 30, 0.92);
+      border-bottom: 1px solid rgba(180, 95, 255, 0.22);
+      box-shadow: 0 0 18px rgba(128, 0, 255, 0.08);
+      backdrop-filter: blur(8px);
+    }
+
+    .nav a {
+      color: #d7c6f7;
+    }
+
+    .nav a:hover {
+      background: rgba(170, 90, 255, 0.18);
+      color: #ffffff;
+    }
+
+    .nav a:hover::after {
+      border-color: rgba(181, 97, 255, 0.45);
+      box-shadow: 0 0 14px rgba(181, 97, 255, 0.35);
+    }
+
+    .nav a.active {
+      background: linear-gradient(135deg, #8d39ff, #c05cff);
+      color: #ffffff;
+    }
+
+    .nav a.active::after {
+      border-color: rgba(223, 176, 255, 0.5);
+      box-shadow: 0 0 16px rgba(181, 97, 255, 0.45);
+    }
+
+    .temporal-hero {
+      width: min(1050px, 92%);
+      margin: 40px auto 20px;
+      padding: 82px 32px;
+      text-align: center;
+      border-radius: 22px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(33, 18, 54, 0.96), rgba(18, 10, 31, 0.96));
+      border: 1px solid rgba(181, 97, 255, 0.35);
+      box-shadow: 0 0 25px rgba(150, 50, 255, 0.16), 0 18px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    .temporal-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 20%, rgba(0, 255, 255, 0.04) 50%, transparent 80%);
+      pointer-events: none;
+    }
+
+    .temporal-hero h1 {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      margin-bottom: 14px;
+      color: #e5c9ff;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 8px rgba(190, 120, 255, 0.85),
+        0 0 20px rgba(181, 97, 255, 0.45),
+        0 0 40px rgba(120, 0, 255, 0.2);
+    }
+
+    .temporal-tagline {
+      font-size: 1.15rem;
+      color: #8ef6ff;
+      margin-bottom: 18px;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.18);
+    }
+
+    .temporal-intro {
+      max-width: 780px;
+      margin: 0 auto;
+      color: #ddd0f5;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .temporal-meta {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+
+    .meta-pill {
+      padding: 9px 15px;
+      border-radius: 999px;
+      border: 1px solid rgba(181, 97, 255, 0.38);
+      background: rgba(255, 255, 255, 0.03);
+      color: #eddcff;
+      font-size: 0.92rem;
+      box-shadow: 0 0 12px rgba(181, 97, 255, 0.1);
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    .hero-btn {
+      display: inline-block;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: 0.25s ease;
+      text-decoration: none;
+    }
+
+    .hero-btn.primary {
+      background: linear-gradient(135deg, #a14bff, #d164ff);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 18px rgba(181, 97, 255, 0.18);
+    }
+
+    .hero-btn.secondary {
+      background: rgba(255, 255, 255, 0.03);
+      color: #aefbff;
+      border: 1px solid rgba(0, 255, 255, 0.2);
+    }
+
+    .hero-btn:hover {
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+
+    .temporal-section {
+      width: min(1050px, 92%);
+      margin: 22px auto;
+      padding: 30px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(21, 11, 35, 0.94), rgba(14, 8, 23, 0.94));
+      border: 1px solid rgba(181, 97, 255, 0.18);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.26);
+    }
+
+    .temporal-section h2 {
+      color: #ddbaff;
+      margin-bottom: 14px;
+      font-size: 1.5rem;
+    }
+
+    .temporal-section p,
+    .temporal-section li {
+      color: #ddd0f5;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .feature-card {
+      background: linear-gradient(180deg, rgba(38, 20, 60, 0.95), rgba(18, 10, 29, 0.95));
+      border: 1px solid rgba(0, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 18px;
+      transition: 0.25s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(181, 97, 255, 0.42);
+      box-shadow: 0 0 16px rgba(181, 97, 255, 0.14);
+    }
+
+    .feature-card h3 {
+      color: #9efcff;
+      margin-bottom: 8px;
+    }
+
+    .mechanic-grid {
+      display: grid;
+      gap: 22px;
+      margin-top: 20px;
+    }
+
+    .mechanic-card {
+      background: linear-gradient(180deg, rgba(33, 18, 54, 0.9), rgba(17, 10, 28, 0.92));
+      border: 1px solid rgba(181, 97, 255, 0.2);
+      border-radius: 16px;
+      padding: 22px;
+    }
+
+    .mechanic-card h3 {
+      color: #9efcff;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+    }
+
+    .mechanic-card p {
+      margin-bottom: 14px;
+    }
+
+    .media-placeholder {
+      margin-top: 14px;
+      padding: 30px 18px;
+      border: 1px dashed rgba(181, 97, 255, 0.38);
+      border-radius: 12px;
+      text-align: center;
+      color: #aefbff;
+      background: linear-gradient(180deg, rgba(33, 18, 54, 0.45), rgba(18, 10, 30, 0.32));
+    }
+
+    .tech-list,
+    .challenge-list,
+    .links-list {
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    .tech-list li,
+    .challenge-list li,
+    .links-list li {
+      margin-bottom: 8px;
+    }
+
+    .status-box {
+      margin-top: 16px;
+      padding: 16px;
+      border-left: 4px solid #9efcff;
+      background: rgba(0, 255, 255, 0.05);
+      border-radius: 10px;
+      color: #e9fdff;
+    }
+
+    .links-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .project-link-btn {
+      display: inline-block;
+      padding: 11px 18px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #a14bff, #d164ff);
+      color: white;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 18px rgba(181, 97, 255, 0.18);
+      transition: 0.25s ease;
+      text-decoration: none;
+    }
+
+    .project-link-btn.alt {
+      background: rgba(255, 255, 255, 0.03);
+      color: #aefbff;
+      border: 1px solid rgba(0, 255, 255, 0.22);
+      box-shadow: none;
+    }
+
+    .project-link-btn:hover {
+      transform: translateY(-2px);
+      text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+      .temporal-hero {
+        padding: 58px 20px;
+      }
+
+      .temporal-section {
+        padding: 22px 18px;
+      }
+
+      .temporal-hero h1 {
+        letter-spacing: 1px;
+      }
+    }
+  </style>
+</head>
+
+<body class="temporal-page">
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="projects.html">Projects</a>
+    <a href="final-year-project.html" class="active">Temporal Thief</a>
+    <a href="skills.html">Skills</a>
+  </nav>
+</header>
+
+<section class="temporal-hero">
+  <h1>Temporal Thief</h1>
+  <p class="temporal-tagline">A 3D stealth puzzle game built around time loops, echoes, and paradoxes.</p>
+
+  <p class="temporal-intro">
+    Temporal Thief is my final year university project and an ongoing personal game project.
+    Built in Unity, it explores how recorded player actions can become both puzzle solutions
+    and gameplay threats across multiple runs.
+  </p>
+
+  <div class="temporal-meta">
+    <span class="meta-pill">Unity</span>
+    <span class="meta-pill">C#</span>
+    <span class="meta-pill">3D Stealth Puzzle</span>
+    <span class="meta-pill">Time-Loop Mechanics</span>
+  </div>
+
+  <div class="hero-actions">
+    <a href="YOUR_GITHUB_LINK_HERE" target="_blank" class="hero-btn primary">View GitHub Repo</a>
+    <a href="YOUR_VIDEO_LINK_HERE" target="_blank" class="hero-btn secondary">Watch Gameplay</a>
+    <a href="YOUR_BUILD_LINK_HERE" target="_blank" class="hero-btn secondary">Download Build</a>
+  </div>
+</section>
+
+<section class="temporal-section">
+  <h2>Overview</h2>
+  <p>
+    Temporal Thief is a 3D stealth puzzle game where the player must move through a level,
+    collect an objective item, and escape without being detected. The key idea behind the game
+    is that each run is recorded and replayed in later attempts as a ghost-like echo of the
+    player’s earlier actions.
+  </p>
+  <p>
+    These echoes can help solve puzzles by repeating useful actions, but they can also become
+    a danger. If the player is seen by one of their past selves, a paradox is triggered and
+    the level resets.
+  </p>
+</section>
+
+<section class="temporal-section">
+  <h2>Why It Stands Out</h2>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h3>Time as the Core Mechanic</h3>
+      <p>
+        Time manipulation is not a side feature here. It is the foundation of the gameplay.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Past Actions Matter</h3>
+      <p>
+        Every run changes the level because your previous movements return as active echoes.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Stealth + Puzzle Design</h3>
+      <p>
+        The project combines stealth tension with puzzle solving that unfolds across multiple runs.
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Player Becomes the Obstacle</h3>
+      <p>
+        Your own earlier choices can block paths, create risk, or force smarter planning later.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="temporal-section">
+  <h2>Core Mechanics</h2>
+
+  <div class="mechanic-grid">
+    <div class="mechanic-card">
+      <h3>1. Echo Recording</h3>
+      <p>
+        During each run, the game records player movement, rotation, and timing data.
+        This creates a timeline of what the player did, which can then be reused in the next loop.
+      </p>
+      <div class="media-placeholder">
+        Add image, GIF, or short clip showing a run being recorded
+      </div>
+    </div>
+
+    <div class="mechanic-card">
+      <h3>2. Echo Playback</h3>
+      <p>
+        In later runs, previous recordings are replayed as echoes. These echoes follow the same
+        path and timing as before, allowing the player to use past actions to activate switches,
+        distract attention, or solve multi-step puzzles.
+      </p>
+      <div class="media-placeholder">
+        Add image, GIF, or video showing an echo replaying a past route
+      </div>
+    </div>
+
+    <div class="mechanic-card">
+      <h3>3. Paradox Detection</h3>
+      <p>
+        Echoes are not just helpful. They also use line-of-sight detection. If the player is seen
+        by one of their earlier selves, a paradox is triggered and the level resets.
+      </p>
+      <div class="media-placeholder">
+        Add image, GIF, or clip showing paradox detection / reset feedback
+      </div>
+    </div>
+
+    <div class="mechanic-card">
+      <h3>4. Multi-Run Puzzle Solving</h3>
+      <p>
+        The puzzle design is built around planning across multiple attempts. The player must think
+        about where to move now, what needs to happen later, and how current actions will affect
+        future runs.
+      </p>
+      <div class="media-placeholder">
+        Add image or clip showing a puzzle being solved across multiple loops
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="temporal-section">
+  <h2>Technical Implementation</h2>
+  <ul class="tech-list">
+    <li>Unity game engine</li>
+    <li>C# scripting</li>
+    <li>Recording and playback systems for player timelines</li>
+    <li>Interpolation for smoother echo movement</li>
+    <li>Raycasting for line-of-sight paradox detection</li>
+    <li>Loop management for spawning, saving runs, and restarting attempts</li>
+    <li>Animation logic tied to movement speed for consistency between player and echoes</li>
+  </ul>
+</section>
+
+<section class="temporal-section">
+  <h2>Challenges & Solutions</h2>
+  <ul class="challenge-list">
+    <li>Making playback feel smooth and predictable instead of stiff or jittery.</li>
+    <li>Ensuring echoes and player spawns always appeared in the correct positions.</li>
+    <li>Making paradox detection feel fair rather than frustrating.</li>
+    <li>Keeping animation behaviour consistent between live gameplay and replayed echoes.</li>
+    <li>Balancing an interesting mechanic with a realistic final year project scope.</li>
+  </ul>
+
+  <div class="status-box">
+    As development continued, predefined spawn points improved consistency, a short delay helped
+    paradox resets feel fairer, and animation logic was adjusted so echoes looked more natural.
+  </div>
+</section>
+
+<section class="temporal-section">
+  <h2>Media Gallery</h2>
+  <p>
+    This area can hold your best screenshots, short clips, puzzle demonstrations, UI images,
+    or a trailer once you have more media ready.
+  </p>
+
+  <div class="media-placeholder">
+    Add a screenshot gallery, embedded gameplay clips, or development progress images here
+  </div>
+</section>
+
+<section class="temporal-section">
+  <h2>Project Links</h2>
+  <p>
+    These links make it easy for someone to explore the project further, whether they want
+    to see the code, watch gameplay, or try a build.
+  </p>
+
+  <div class="links-row">
+    <a href="YOUR_GITHUB_LINK_HERE" target="_blank" class="project-link-btn">GitHub Repo</a>
+    <a href="YOUR_VIDEO_LINK_HERE" target="_blank" class="project-link-btn alt">Gameplay Video</a>
+    <a href="YOUR_BUILD_LINK_HERE" target="_blank" class="project-link-btn alt">Playable Build</a>
+  </div>
+</section>
+
+<section class="temporal-section">
+  <h2>Future Plans</h2>
+  <p>
+    I want to continue developing Temporal Thief beyond university by improving puzzle design,
+    refining the feedback and presentation, expanding the mechanics, and pushing the idea further
+    as a long-term personal game project.
+  </p>
+
+  <div class="links-row">
+    <a href="projects.html" class="project-link-btn">Back to Projects</a>
+  </div>
+</section>
+
+</body>
+</html>

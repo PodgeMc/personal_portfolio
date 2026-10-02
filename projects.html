@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects</title>
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    .projects-page {
+      background:
+        radial-gradient(circle at top right, rgba(88, 166, 255, 0.08), transparent 28%),
+        linear-gradient(180deg, #0d1117 0%, #0b1220 100%);
+    }
+
+    .projects-hero {
+      width: min(1050px, 92%);
+      margin: 34px auto 12px;
+      padding: 44px 32px;
+      background: linear-gradient(135deg, rgba(31, 111, 235, 0.16), rgba(88, 166, 255, 0.05));
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 20px;
+      box-shadow: 0 24px 52px rgba(0, 0, 0, 0.35);
+    }
+
+    .projects-kicker {
+      display: inline-block;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      color: #58a6ff;
+      margin-bottom: 12px;
+    }
+
+    .projects-hero h1 {
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
+      margin-bottom: 14px;
+      color: #ffffff;
+      line-height: 1.08;
+    }
+
+    .projects-hero p {
+      max-width: 780px;
+      color: #b8c4d3;
+      font-size: 1.04rem;
+      margin-bottom: 0;
+    }
+
+    .projects-divider {
+      width: 120px;
+      height: 4px;
+      border-radius: 999px;
+      margin-top: 18px;
+      background: linear-gradient(90deg, #58a6ff, #1f6feb);
+      box-shadow: 0 0 18px rgba(88, 166, 255, 0.28);
+    }
+
+    .projects-section {
+      width: min(1050px, 92%);
+      margin: auto;
+      padding: 24px 0 30px;
+    }
+
+    .projects-section + .projects-section {
+      border-top: 1px solid rgba(88, 166, 255, 0.08);
+      margin-top: 6px;
+      padding-top: 30px;
+    }
+
+    .projects-section h2 {
+      position: relative;
+      padding-left: 14px;
+      color: #ffffff;
+      margin-bottom: 18px;
+    }
+
+    .projects-section h2::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 4px;
+      width: 4px;
+      height: 24px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #58a6ff, #1f6feb);
+    }
+
+    .featured-project {
+      background: linear-gradient(180deg, rgba(22, 27, 34, 0.98), rgba(16, 21, 29, 0.98));
+      border: 1px solid rgba(88, 166, 255, 0.14);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.32);
+    }
+
+    .featured-layout {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 0;
+    }
+
+    .featured-preview {
+      min-height: 320px;
+      background:
+        linear-gradient(135deg, rgba(88,166,255,0.18), rgba(255,255,255,0.03)),
+        linear-gradient(180deg, #111827 0%, #0f1726 100%);
+      border-right: 1px solid rgba(88, 166, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8fbfff;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .featured-content {
+      padding: 28px;
+    }
+
+    .featured-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .featured-content h3 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 1.5rem;
+    }
+
+    .project-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(88, 166, 255, 0.10);
+      border: 1px solid rgba(88, 166, 255, 0.16);
+      color: #8cc2ff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .featured-content p {
+      color: #c9d1d9;
+      margin-bottom: 14px;
+    }
+
+    .project-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0 18px;
+    }
+
+    .project-meta span {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(88, 166, 255, 0.07);
+      border: 1px solid rgba(88, 166, 255, 0.12);
+      color: #9bc8ff;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .project-btn {
+      display: inline-block;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #58a6ff, #1f6feb);
+      color: #0d1117;
+      border-radius: 10px;
+      font-weight: 700;
+      border: 1px solid #1f6feb;
+      transition: 0.22s ease;
+    }
+
+    .project-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(31, 111, 235, 0.28);
+      text-decoration: none;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .project-card {
+      background: linear-gradient(180deg, rgba(22, 27, 34, 0.98), rgba(16, 21, 29, 0.98));
+      border: 1px solid rgba(88, 166, 255, 0.12);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.28);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(88, 166, 255, 0.34);
+      box-shadow: 0 24px 44px rgba(0, 0, 0, 0.36), 0 0 18px rgba(88, 166, 255, 0.08);
+    }
+
+    .project-preview {
+      height: 200px;
+      background:
+        linear-gradient(135deg, rgba(88,166,255,0.14), rgba(255,255,255,0.03)),
+        linear-gradient(180deg, #111827 0%, #0f1726 100%);
+      border-bottom: 1px solid rgba(88, 166, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8fbfff;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .project-body {
+      padding: 22px;
+    }
+
+    .project-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .project-body h3 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 1.2rem;
+    }
+
+    .project-body p {
+      color: #c9d1d9;
+      margin-bottom: 14px;
+    }
+
+    .project-note {
+      margin-top: 10px;
+      font-size: 0.86rem;
+      color: #9da7b2;
+    }
+
+    .small-btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .project-btn-secondary {
+      display: inline-block;
+      padding: 10px 16px;
+      background: transparent;
+      color: #8fbfff;
+      border-radius: 10px;
+      font-weight: 700;
+      border: 1px solid rgba(88, 166, 255, 0.18);
+      transition: 0.22s ease;
+    }
+
+    .project-btn-secondary:hover {
+      border-color: rgba(88, 166, 255, 0.34);
+      background: rgba(88, 166, 255, 0.06);
+      text-decoration: none;
+    }
+
+    @media (max-width: 860px) {
+      .featured-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .featured-preview {
+        min-height: 220px;
+        border-right: none;
+        border-bottom: 1px solid rgba(88, 166, 255, 0.12);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .projects-hero {
+        padding: 34px 22px;
+      }
+    }
+  </style>
+</head>
+
+<body class="projects-page">
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="projects.html" class="active">Projects</a>
+    <a href="final-year-project.html">Final Year Project</a>
+    <a href="skills.html">Skills</a>
+    <a href="vr-site.html">VR Site</a>
+  </nav>
+</header>
+
+<div class="projects-hero">
+  <span class="projects-kicker">Project Showcase</span>
+  <h1>Projects</h1>
+  <p>
+    This page brings together some of my main work across game development, self-hosting,
+    Linux-based systems, automation, and software experimentation. Each project taught me
+    something different, from designing interactive ideas to managing real hardware and services.
+  </p>
+  <div class="projects-divider"></div>
+</div>
+
+<section class="projects-section">
+  <h2>Featured Project</h2>
+
+  <div class="featured-project">
+    <div class="featured-layout">
+      <div class="featured-preview">
+        Temporal Thief<br>
+        Screenshot / key art placeholder
+      </div>
+
+      <div class="featured-content">
+        <div class="featured-top">
+          <h3>Temporal Thief</h3>
+          <span class="project-tag">Final Year Game Project</span>
+        </div>
+
+        <p>
+          Temporal Thief is my final year game project, built around stealth gameplay and
+          time manipulation. The project focuses on combining atmosphere, mechanic design,
+          and player tension into a stronger overall game concept.
+        </p>
+
+        <p>
+          It represents a more ambitious piece of work for me because it moves beyond small
+          experiments and pushes toward a fuller playable experience with a clearer design identity.
+        </p>
+
+        <div class="project-meta">
+          <span>Unity</span>
+          <span>Stealth Gameplay</span>
+          <span>Time Mechanics</span>
+          <span>Final Year Project</span>
+        </div>
+
+        <a href="final-year-project.html" class="project-btn">View Project</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="projects-section">
+  <h2>More Projects</h2>
+
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-preview">
+        Raspberry Pi hosting setup<br>
+        Screenshot placeholder
+      </div>
+
+      <div class="project-body">
+        <div class="project-top">
+          <h3>Raspberry Pi Portfolio Server</h3>
+          <span class="project-tag">Hosting / Linux</span>
+        </div>
+
+        <p>
+          This portfolio is hosted from my own Raspberry Pi rather than a standard hosting
+          platform. Building it this way helped me learn more about Linux, Nginx, deployment,
+          remote management, and the practical side of running a live website from my own hardware.
+        </p>
+
+        <div class="project-meta">
+          <span>Raspberry Pi</span>
+          <span>Nginx</span>
+          <span>Self Hosting</span>
+          <span>Linux</span>
+        </div>
+
+        <div class="small-btn-row">
+          <a href="raspberry-pi-portfolio.html" class="project-btn">View Details</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-preview">
+        Pi Control Panel V5<br>
+        Mobile and desktop server dashboard
+      </div>
+
+      <div class="project-body">
+        <div class="project-top">
+          <h3>Pi Control Panel V5</h3>
+          <span class="project-tag">Flutter / Server Control</span>
+        </div>
+
+        <p>
+          A cross-platform Flutter app built to monitor and control my Raspberry Pi server setup.
+          It connects to a Python backend running on the Pi and gives me live status checks,
+          service controls, storage monitoring, media import progress, and system information
+          from desktop or mobile.
+        </p>
+
+        <p>
+          The app can check Plex, the hosted website, connected storage drives, and system health.
+          It can also restart Plex, restart the website, start media imports, and connect locally
+          or remotely through Tailscale.
+        </p>
+
+        <div class="project-meta">
+          <span>Flutter</span>
+          <span>Dart</span>
+          <span>Python Flask</span>
+          <span>Raspberry Pi</span>
+          <span>Tailscale</span>
+        </div>
+
+        <div class="small-btn-row">
+          <a href="pi-control-panel.html" class="project-btn">View Details</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-preview">
+        Plex dashboard / server image<br>
+        Screenshot placeholder
+      </div>
+
+      <div class="project-body">
+        <div class="project-top">
+          <h3>Raspberry Pi Plex Media Server</h3>
+          <span class="project-tag">Home Server / Automation</span>
+        </div>
+
+        <p>
+          A self-hosted media server running on a Raspberry Pi, built to organise content,
+          support remote access, and create a smoother workflow for managing media. It also
+          connects with my wider interest in automation and custom system design.
+        </p>
+
+        <p>
+          Longer term, this project is also a stepping stone toward creating a more custom
+          private streaming platform with greater control over the interface and experience.
+        </p>
+
+        <div class="project-meta">
+          <span>Plex</span>
+          <span>Automation</span>
+          <span>Python Tools</span>
+          <span>Media Server</span>
+        </div>
+
+        <div class="small-btn-row">
+          <a href="plex-media-server.html" class="project-btn">View Details</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-preview">
+        App screenshot placeholder<br>
+        Where's My Car
+      </div>
+
+      <div class="project-body">
+        <div class="project-top">
+          <h3>Mobile App: Where's My Car</h3>
+          <span class="project-tag">Android App</span>
+        </div>
+
+        <p>
+          A simple Android app from my first year of college that helps save your parking
+          location so you can find your car again later. It was one of my earlier practical
+          app projects and helped me build confidence creating useful software.
+        </p>
+
+        <div class="project-meta">
+          <span>Android</span>
+          <span>Mobile App</span>
+          <span>Early Project</span>
+        </div>
+
+        <div class="small-btn-row">
+          <a href="MobileApps/Android_Wheres_my_car.apk" download class="project-btn">Download APK</a>
+        </div>
+
+        <p class="project-note">
+          *Android may require enabling Install from unknown sources to install this app.*
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="projects-section">
+  <h2>Why These Projects Matter</h2>
+  <div class="featured-project" style="padding: 24px;">
+    <p style="color:#c9d1d9; margin-bottom: 14px;">
+      Across these projects, I have been building more than just isolated pieces of work.
+      I have been developing practical skills in game design, Linux hosting, automation,
+      system management, app development, remote access, and project presentation.
+    </p>
+    <p style="color:#c9d1d9; margin-bottom: 0;">
+      The goal of this portfolio is not only to show finished outcomes, but also to show
+      how I think, how I learn, and the kinds of systems and ideas I enjoy building.
+    </p>
+  </div>
+</section>
+
+</body>
+</html>

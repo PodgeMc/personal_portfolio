@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>VR Office Room</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+  <style>
+    :root {
+      --vr-bg: #060914;
+      --vr-surface: rgba(11, 18, 34, 0.78);
+      --vr-surface-strong: rgba(14, 22, 42, 0.9);
+      --vr-border: rgba(139, 233, 253, 0.16);
+      --vr-text: #eef4ff;
+      --vr-muted: #aab7d6;
+      --vr-accent: #8be9fd;
+      --vr-accent-2: #7c5cff;
+      --vr-accent-3: #61b8ff;
+      --vr-success: #50fa7b;
+      --vr-warm: #ffb86c;
+      --vr-glow: rgba(139, 233, 253, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(124, 92, 255, 0.14), transparent 24%),
+        radial-gradient(circle at top left, rgba(97, 184, 255, 0.10), transparent 28%),
+        linear-gradient(180deg, #050812 0%, #0a1020 100%);
+      color: var(--vr-text);
+      overflow: hidden;
+    }
+
+    .ui-shell {
+      position: fixed;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      pointer-events: none;
+    }
+
+    .ui-bar,
+    .ui-tip {
+      pointer-events: auto;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(135deg, rgba(16, 24, 45, 0.82), rgba(8, 12, 24, 0.72));
+      border: 1px solid var(--vr-border);
+      box-shadow: 0 14px 34px rgba(0,0,0,0.34), 0 0 24px rgba(139,233,253,0.06);
+      border-radius: 16px;
+    }
+
+    .ui-bar {
+      padding: 14px 16px;
+      max-width: 560px;
+    }
+
+    .ui-kicker {
+      display: inline-block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 700;
+      color: var(--vr-accent);
+      margin-bottom: 8px;
+    }
+
+    .ui-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .ui-links {
+      color: var(--vr-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .ui-links a {
+      color: var(--vr-accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .ui-links a:hover {
+      color: #ffffff;
+    }
+
+    .ui-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .ui-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #d7e7ff;
+      background: rgba(139, 233, 253, 0.08);
+      border: 1px solid rgba(139, 233, 253, 0.14);
+    }
+
+    .ui-tip {
+      padding: 14px 16px;
+      min-width: 250px;
+      max-width: 330px;
+    }
+
+    .ui-tip strong {
+      display: block;
+      color: #ffffff;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .ui-tip p {
+      margin: 0;
+      color: var(--vr-muted);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .screen-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      background:
+        radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.30) 100%);
+    }
+
+    @media (max-width: 900px) {
+      .ui-shell {
+        flex-direction: column;
+      }
+
+      .ui-bar,
+      .ui-tip {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="ui-shell">
+    <div class="ui-bar">
+      <span class="ui-kicker">Interactive VR Space</span>
+      <div class="ui-title">VR Office Demo</div>
+      <div class="ui-links">
+        <a href="index.html">← Back to Site</a>
+      </div>
+      <div class="ui-pill-row">
+        <span class="ui-pill">A-Frame</span>
+        <span class="ui-pill">WebXR</span>
+        <span class="ui-pill">Interactive Room</span>
+      </div>
+    </div>
+
+    <div class="ui-tip">
+      <strong>How to explore</strong>
+      <p>
+        Use WASD to move and your mouse to look around. Click the desk lamp to change the room
+        lighting, and use the project button to enter the VR project library.
+      </p>
+    </div>
+  </div>
+
+  <div class="screen-vignette"></div>
+
+  <a-scene
+    background="color: #1b223d"
+    renderer="antialias: true; colorManagement: true"
+    vr-mode-ui="enabled: true"
+    fog="type: linear; color: #0b1020; near: 4; far: 12"
+  >
+    <!-- PRELOAD 3D MODELS -->
+    <a-assets>
+      <a-asset-item id="rubberDuckModel" src="models/RubberDuck.glb"></a-asset-item>
+    </a-assets>
+
+    <!-- CAMERA -->
+    <a-entity id="rig" position="0 1.2 0">
+      <a-entity camera
+                look-controls
+                wasd-controls
+                cursor="rayOrigin: mouse"
+                raycaster="objects: .clickable">
+      </a-entity>
+    </a-entity>
+
+    <!-- GLOBAL LIGHTING -->
+    <a-entity light="type: ambient; intensity: 0.28; color: #dfe6ff"></a-entity>
+    <a-entity light="type: directional; intensity: 0.3; color: #cfdcff" position="2 4 3"></a-entity>
+
+    <!-- COLORED FILL LIGHTS -->
+    <a-entity light="type: point; intensity: 0.45; distance: 8; decay: 2; color: #7c5cff"
+              position="-2 1.6 1.2"></a-entity>
+    <a-entity light="type: point; intensity: 0.38; distance: 8; decay: 2; color: #61b8ff"
+              position="2 1.6 1.2"></a-entity>
+
+    <!-- MAIN CEILING LIGHT -->
+    <a-entity
+      id="mainLight"
+      light="type: point; intensity: 1.15; distance: 10; decay: 2; color: #ffffff"
+      position="0 2.9 0"
+      visible="true">
+    </a-entity>
+
+    <!-- CEILING FIXTURE -->
+    <a-cylinder
+      position="0 3.1 0"
+      radius="0.16"
+      height="0.1"
+      material="shader: flat; color: #9198b0">
+    </a-cylinder>
+
+    <a-circle
+      position="0 3.05 0"
+      rotation="-90 0 0"
+      radius="0.46"
+      material="shader: flat; color: #eef2ff">
+    </a-circle>
+
+    <!-- ROOM -->
+    <a-box
+      position="0 1.5 0"
+      width="8" height="3" depth="8"
+      material="shader: flat; color: #151b31; side: back">
+    </a-box>
+
+    <!-- FLOOR -->
+    <a-plane
+      rotation="-90 0 0"
+      width="8" height="8"
+      material="shader: flat; color: #0d1222">
+    </a-plane>
+
+    <!-- FLOOR ACCENT -->
+    <a-plane
+      rotation="-90 0 0"
+      position="0 0.01 -0.8"
+      width="5.8" height="5.8"
+      material="shader: flat; color: #121a31; opacity: 0.85">
+    </a-plane>
+
+    <!-- DESK -->
+    <a-box position="0 0.75 -1.8" width="2.4" height="0.1" depth="1"
+           material="shader: flat; color: #464e7f"></a-box>
+    <a-box position="-1 0.35 -1.8" width="0.2" height="0.7" depth="1"
+           material="shader: flat; color: #32395e"></a-box>
+    <a-box position="1 0.35 -1.8" width="0.2" height="0.7" depth="1"
+           material="shader: flat; color: #32395e"></a-box>
+
+    <!-- CHAIR -->
+    <a-cylinder position="0 0.3 -0.6" radius="0.35" height="0.15"
+                material="shader: flat; color: #3e4561"></a-cylinder>
+    <a-cylinder position="0 0.8 -0.6" radius="0.25" height="0.4"
+                material="shader: flat; color: #242b42"></a-cylinder>
+    <a-box position="0 1.2 -0.6" width="0.8" height="0.4" depth="0.1"
+           material="shader: flat; color: #2e3551"></a-box>
+
+    <!-- MONITOR -->
+    <a-box position="-0.2 1.05 -1.55" width="0.9" height="0.55" depth="0.05"
+           material="shader: flat; color: #090c14"></a-box>
+    <a-plane position="-0.2 1.05 -1.52" width="0.78" height="0.44"
+             material="shader: flat; color: #182744"></a-plane>
+    <a-box position="-0.2 0.85 -1.55" width="0.18" height="0.3" depth="0.08"
+           material="shader: flat; color: #161b2c"></a-box>
+
+    <!-- KEYBOARD -->
+    <a-box position="0 0.8 -1.25" width="0.9" height="0.05" depth="0.35"
+           material="shader: flat; color: #10121d"></a-box>
+
+    <!-- PC TOWER -->
+    <a-box position="1.3 0.6 -1.8" width="0.4" height="0.9" depth="0.4"
+           material="shader: flat; color: #252b42"></a-box>
+    <a-plane position="1.1 0.72 -1.59" width="0.08" height="0.35"
+             rotation="0 90 0"
+             material="shader: flat; color: #8be9fd; opacity: 0.75"></a-plane>
+
+    <!-- RUBBER DUCK -->
+    <a-entity
+      gltf-model="#rubberDuckModel"
+      position="0.6 0.82 -1.4"
+      rotation="0 -20 0"
+      scale="0.3 0.3 0.3">
+    </a-entity>
+
+    <!-- DESK LAMP (clickable) -->
+    <a-entity id="deskLamp" class="clickable" position="0.9 0.8 -1.4">
+      <a-cylinder radius="0.12" height="0.08"
+                  material="shader: flat; color: #434a64"></a-cylinder>
+      <a-cylinder position="0 0.18 0" radius="0.03" height="0.28"
+                  material="shader: flat; color: #59627f"></a-cylinder>
+      <a-cone position="0 0.38 0.05" radius-bottom="0.18" radius-top="0.05" height="0.25"
+              rotation="-60 0 0"
+              material="shader: flat; color: #6b7695"></a-cone>
+      <a-sphere id="deskLampBulb" position="0 0.35 0.12" radius="0.06"
+                material="shader: flat; color: #cccccc; emissive: #000000; emissiveIntensity: 0">
+      </a-sphere>
+    </a-entity>
+
+    <!-- DESK LAMP LIGHT -->
+    <a-entity
+      id="deskLampLight"
+      light="type: spot; intensity: 1.45; angle: 45; penumbra: 0.4; distance: 4; decay: 2; color: #ffe7b3"
+      position="0.9 1.0 -1.4"
+      rotation="-60 20 0"
+      visible="false">
+    </a-entity>
+
+    <!-- BOOKSHELF -->
+    <a-box position="-2.3 1.5 -1" width="0.6" height="2.2" depth="1.2"
+           material="shader: flat; color: #2d3456"></a-box>
+
+    <!-- SHELVES -->
+    <a-box position="-2.3 2.2 -1" width="0.55" height="0.08" depth="1.1"
+           material="shader: flat; color: #434d77"></a-box>
+    <a-box position="-2.3 1.7 -1" width="0.55" height="0.08" depth="1.1"
+           material="shader: flat; color: #434d77"></a-box>
+    <a-box position="-2.3 1.2 -1" width="0.55" height="0.08" depth="1.1"
+           material="shader: flat; color: #434d77"></a-box>
+
+    <!-- BOOKS -->
+    <a-box position="-2.3 2.25 -0.8" width="0.12" height="0.3" depth="0.3"
+           material="shader: flat; color: #ff7b72"></a-box>
+    <a-box position="-2.3 2.25 -1.0" width="0.12" height="0.3" depth="0.3"
+           material="shader: flat; color: #72baf2"></a-box>
+    <a-box position="-2.3 2.25 -1.2" width="0.12" height="0.3" depth="0.3"
+           material="shader: flat; color: #7ef2b3"></a-box>
+
+    <!-- POSTER -->
+    <a-plane position="2.2 1.7 -1.2" width="1.55" height="1.02"
+             material="shader: flat; color: #121a30"></a-plane>
+    <a-plane position="2.2 1.7 -1.19" width="1.46" height="0.93"
+             material="shader: flat; color: #182541"></a-plane>
+    <a-entity position="2.2 1.82 -1.12"
+              text="value: VR OFFICE; align: center; width: 3; color: #8be9fd">
+    </a-entity>
+    <a-entity position="2.2 1.52 -1.12"
+              text="value: Explore the room\\nand open the project library.; align: center; width: 2.3; color: #dbe7ff">
+    </a-entity>
+
+    <!-- PROJECTS BUTTON -->
+    <a-box id="btnProjects" class="clickable"
+           position="2.2 1.0 -1.2" width="0.95" height="0.34" depth="0.1"
+           material="shader: flat; color: #1f6feb"></a-box>
+
+    <a-entity position="2.2 1.0 -1.1"
+              text="value: Open Library; align: center; width: 2.3; color: #ffffff"></a-entity>
+
+    <!-- WALL ACCENT -->
+    <a-plane position="0 2.45 -3.7" width="2.8" height="0.08"
+             material="shader: flat; color: #8be9fd; opacity: 0.75"></a-plane>
+  </a-scene>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const btnProjects   = document.getElementById("btnProjects");
+      const deskLamp      = document.getElementById("deskLamp");
+      const deskLampBulb  = document.getElementById("deskLampBulb");
+      const deskLampLight = document.getElementById("deskLampLight");
+      const mainLight     = document.getElementById("mainLight");
+
+      if (!btnProjects || !deskLamp || !deskLampBulb || !deskLampLight || !mainLight) {
+        console.warn("One or more VR elements not found – check IDs in HTML.");
+        return;
+      }
+
+      let deskLampOn = false;
+
+      btnProjects.addEventListener("click", () => {
+        window.location.href = "vrprojects.html";
+      });
+
+      function updateLighting() {
+        if (deskLampOn) {
+          mainLight.setAttribute("visible", false);
+          deskLampLight.setAttribute("visible", true);
+          deskLampBulb.setAttribute(
+            "material",
+            "shader: flat; color: #fffbe6; emissive: #ffe7a3; emissiveIntensity: 1.2"
+          );
+        } else {
+          mainLight.setAttribute("visible", true);
+          deskLampLight.setAttribute("visible", false);
+          deskLampBulb.setAttribute(
+            "material",
+            "shader: flat; color: #cccccc; emissive: #000000; emissiveIntensity: 0"
+          );
+        }
+      }
+
+      deskLamp.addEventListener("click", () => {
+        deskLampOn = !deskLampOn;
+        updateLighting();
+      });
+
+      updateLighting();
+    });
+  </script>
+
+</body>
+</html>
